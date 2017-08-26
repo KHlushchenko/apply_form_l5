@@ -1,0 +1,23 @@
+{
+    "name": "vis/apply_forms_l5",
+    "description": "Apply Forms handler package for L5",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "vis",
+            "email": "k.gluschenko@vis-design.com"
+        }
+    ],
+    "require": {
+      "vis/mail_templates_l5": "1.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/Models",
+            "src/Http/Controllers"
+        ],
+        "psr-4": {
+            "Vis\\ApplyForms\\": "src/"
+        }
+    }
+}
