@@ -6,8 +6,8 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Vis\\ApplyForms\\Controllers\\ApplyFormController' => $baseDir . '/src/Http/Controllers/ApplyFormController.php',
-    'Vis\\ApplyForms\\Models\\AbstractApplyForm' => $baseDir . '/src/Models/AbstractApplyForm.php',
-    'Vis\\ApplyForms\\Models\\ApplyFormFactory' => $baseDir . '/src/Models/ApplyFormFactory.php',
-    'Vis\\ApplyForms\\Models\\ApplyFormInputCleaner' => $baseDir . '/src/Models/ApplyFormInputCleaner.php',
+    'Vis\\ApplyForm\\Controllers\\ApplyFormController' => $baseDir . '/src/Http/Controllers/ApplyFormController.php',
+    'Vis\\ApplyForm\\Models\\AbstractApplyForm' => $baseDir . '/src/Models/AbstractApplyForm.php',
+    'Vis\\ApplyForm\\Models\\ApplyFormFactory' => $baseDir . '/src/Models/ApplyFormFactory.php',
+    'Vis\\ApplyForm\\Models\\ApplyFormInputCleaner' => $baseDir . '/src/Models/ApplyFormInputCleaner.php',
 );

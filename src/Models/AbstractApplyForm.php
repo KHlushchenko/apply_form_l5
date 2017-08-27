@@ -1,7 +1,8 @@
 <?php
-namespace Vis\ApplyForms\Models;
+namespace Vis\ApplyForm\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 use \Request;
 use \Validator;
@@ -16,8 +17,6 @@ abstract class AbstractApplyForm extends Model
 	protected $fillable = [];
 
     private $inputCleaner;
-
-    private $captchaSecretKey = '';
 
     private $inputData = [];
 
@@ -34,10 +33,9 @@ abstract class AbstractApplyForm extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->captchaSecretKey = env('RE_CAPTCHA_SECRET_KEY');
     }
 
-    protected function inputCleaner(): ApplyFormInputCleaner
+    final protected function inputCleaner(): ApplyFormInputCleaner
     {
         if (!$this->inputCleaner) {
             $this->inputCleaner = new ApplyFormInputCleaner();
@@ -46,17 +44,12 @@ abstract class AbstractApplyForm extends Model
         return $this->inputCleaner;
     }
 
-    private function getCaptchaSecretKey(): string
-    {
-        return $this->captchaSecretKey;
-    }
-
 	private function getInputData(): array
 	{
 		return $this->inputData;
 	}
 
-	public function setInputData(array $inputData)
+	final public function setInputData(array $inputData)
 	{
 		$this->inputData = $inputData;
 
@@ -88,25 +81,25 @@ abstract class AbstractApplyForm extends Model
 		return $this->mailAddressSettingName;
 	}
 
-    public function setMessage(string $message)
+    final public function setMessage(string $message)
     {
         $this->message = $message;
     }
 
-    public function getMessage(): string
+    final public function getMessage(): string
     {
         return $this->message;
     }
 
     private function validateCaptcha(): bool
     {
-        if (!isset($this->getInputData()['g-recaptcha-response'])) {
+        if (!isset($this->getInputData()['grecaptcha_response'])) {
             return false;
         }
 
         $params = [
-            'secret'   => $this->getCaptchaSecretKey(),
-            'response' => $this->getInputData()['g-recaptcha-response'],
+            'secret'   => config('apply_form.apply_form.grecaptcha.secret_key'),
+            'response' => $this->getInputData()['grecaptcha_response'],
             'remoteip' => Request::getClientIp()
         ];
 
@@ -118,7 +111,7 @@ abstract class AbstractApplyForm extends Model
             return false;
         }
 
-        unset($this->getInputData()['g-recaptcha-response']);
+        unset($this->getInputData()['grecaptcha_response']);
 
         return true;
     }
@@ -202,24 +195,20 @@ abstract class AbstractApplyForm extends Model
     //fixme uncomment transaction
     final public function apply(): bool
     {
-        /*DB::beginTransaction();
+        //fixme redo responsing for this method
+        if (config('apply_form.apply_form.transaction_enabled')) {
+            DB::beginTransaction();
+            try {
+                $this->fire();
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+            }
+        } else {
+            $this->fire();
+        }
 
-        try {*/
-
-        $this->fire();
-        /*DB::commit();*/
-
-        //fixme add setMessage success
         return true;
-
-        /*} catch (Exception $e) {
-
-           //fixme add setMessage fail
-
-            DB::rollBack();
-
-            return false;
-        }*/
     }
 
 }

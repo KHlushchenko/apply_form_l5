@@ -1,5 +1,5 @@
 {
-    "name": "vis/apply_forms_l5",
+    "name": "vis/apply_form_l5",
     "description": "Apply Forms handler package for L5",
     "license": "proprietary",
     "authors": [
@@ -17,7 +17,7 @@
             "src/Http/Controllers"
         ],
         "psr-4": {
-            "Vis\\ApplyForms\\": "src/"
+            "Vis\\ApplyForm\\": "src/"
         }
     }
 }

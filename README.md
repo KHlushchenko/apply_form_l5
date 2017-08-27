@@ -9,17 +9,17 @@
 ## Установка
 Выполняем
 ```json
-    composer require "vis/apply-forms_l5":"1.*"
-``
+    composer require "vis/apply_form_l5":"1.*"
+```
 
 Добавляем ApplyFormsServiceProvider в массив ServiceProviders в config/app.php
 ```php
-   Vis\ApplyForms\ApplyFormsServiceProvider::class,
+   Vis\ApplyForm\ApplyFormsServiceProvider::class,
 ```
 
 Публикуем config и js
 ```php
-    php artisan vendor:publish --provider="Vis\ApplyForms\ApplyFormsServiceProvider" --force
+    php artisan vendor:publish --provider="Vis\ApplyForm\ApplyFormsServiceProvider" --force
 ```
 
 ## Настройка

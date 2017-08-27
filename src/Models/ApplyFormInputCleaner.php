@@ -1,5 +1,5 @@
 <?php
-namespace Vis\ApplyForms\Models;
+namespace Vis\ApplyForm\Models;
 
 class ApplyFormInputCleaner
 {

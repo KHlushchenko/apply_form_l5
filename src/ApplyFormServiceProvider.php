@@ -1,9 +1,9 @@
-<?php namespace Vis\ApplyForms;
+<?php namespace Vis\ApplyForm;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
-class ApplyFormsServiceProvider extends ServiceProvider
+class ApplyFormServiceProvider extends ServiceProvider
 {
 
     /**
@@ -17,19 +17,19 @@ class ApplyFormsServiceProvider extends ServiceProvider
 
         $this->setupRoutes($this->app->router);
 
-        $this->loadViewsFrom(realpath(__DIR__ . '/resources/views'), 'apply_forms');
+        $this->loadViewsFrom(realpath(__DIR__ . '/resources/views'), 'apply_form');
 
         $this->publishes([
-            __DIR__ . '/config' => config_path('apply-form/')
-        ], 'apply-form-config');
+            __DIR__ . '/config' => config_path('apply_form/')
+        ], 'apply_form_config');
 
         $this->publishes([
-            __DIR__ . '/published/js/apply_forms.js' => public_path('packages/vis/apply_forms/apply_forms.js'),
+            __DIR__ . '/published/js/apply_form.js' => public_path('packages/vis/apply_form/apply_form.js'),
         ], 'public');
 
         $this->publishes([
-            __DIR__ . '/published/js/apply_forms_rules.js' => public_path('js/apply_forms_rules.js'),
-        ], 'apply-form-rules');
+            __DIR__ . '/published/js/apply_form_rules.js' => public_path('js/apply_form_rules.js'),
+        ], 'apply_form_rules');
 
     }
 

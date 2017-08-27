@@ -5,7 +5,7 @@ Route::pattern('formSlug', '[a-z-_]+');
 Route::group(
     [
         'prefix'     => LaravelLocalization::setLocale(),
-        'namespace'  => 'Vis\ApplyForms\Controllers',
+        'namespace'  => 'Vis\ApplyForm\Controllers',
     ],
     function () {
         if (Request::ajax()) {

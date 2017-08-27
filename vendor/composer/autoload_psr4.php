@@ -6,5 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Vis\\ApplyForms\\' => array($baseDir . '/src'),
+    'Vis\\ApplyForm\\' => array($baseDir . '/src'),
 );

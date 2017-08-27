@@ -1,12 +1,8 @@
 'use strict';
 
-ApplyForm.apply_forms = [
-
-];
-
+//add additional methods for validating inputs in this class
 var ApplyFormRules =
     {
-        //add additional methods for validating inputs
         init: function () {
 
         },
