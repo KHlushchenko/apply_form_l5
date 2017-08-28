@@ -15,10 +15,6 @@ class ApplyFormFactory
             throw new Exception('Apply form type is not defined!');
         }
 
-        if ($applyForm[0] != '\\') {
-            $applyForm = '\\' . $applyForm;
-        }
-
         if (!class_exists($applyForm)) {
             throw new Exception('Apply form class does not exist!');
         }

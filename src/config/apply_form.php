@@ -26,9 +26,4 @@ return [
      */
     'transaction_enabled' => true,
 
-    /**
-     * Modal popup timeout in milliseconds
-     */
-    'modal_timeout'       => 5000,
-
 ];

@@ -5,13 +5,10 @@ var ApplyForm =
         apply_forms: [
 
         ],
-
         active_apply_form_name: '',
 
         grecaptcha_enabled: true,
         grecaptcha_response : '',
-
-        modal_timeout: 5000,
 
         setApplyForms: function (applyForms) {
             ApplyForm.apply_forms = applyForms;
@@ -29,12 +26,6 @@ var ApplyForm =
             ApplyForm.grecaptcha_response = response;
         },
 
-        setModalTimeout: function (milliseconds) {
-            if (parseInt(milliseconds)) {
-                ApplyForm.modal_timeout = milliseconds;
-            }
-        },
-
         executeCaptcha: function () {
             grecaptcha.execute();
         },
@@ -45,6 +36,26 @@ var ApplyForm =
 
         disableSubmitButton: function (form, value) {
             $(form).find('button[type="submit"]').attr('disabled', value);
+        },
+
+        resetForm: function (form) {
+            form[0].reset();
+            form.find(".btn_upload, .file_name_placeholder").show();
+            form.find(".btn_delete, .file_name").hide();
+            ApplyForm.setActiveForm('');
+
+            if (ApplyForm.grecaptcha_enabled) {
+                ApplyForm.setGrecaptchaResponse('');
+                ApplyForm.resetCaptcha();
+            }
+        },
+
+        successCallback: function(message){
+
+        },
+
+        failCallback: function(message){
+
         },
 
         submitActiveForm: function () {
@@ -69,55 +80,12 @@ var ApplyForm =
                     ApplyForm.disableSubmitButton(ApplyForm.active_apply_form_name, true);
                     if (response.status) {
                         ApplyForm.resetForm($form);
-                        ApplyForm.showSuccessModal(response.message.title, response.message.message);
+                        ApplyForm.successCallback(response.message);
                     } else {
-                        ApplyForm.showErrorModal(response.message.title, response.message.message);
+                        ApplyForm.failCallback(response.message);
                     }
                 }
             });
-        },
-
-        resetForm: function (form) {
-            form[0].reset();
-            form.find(".btn_upload, .file_name_placeholder").show();
-            form.find(".btn_delete, .file_name").hide();
-            ApplyForm.setActiveForm('');
-
-            if (ApplyForm.grecaptcha_enabled) {
-                ApplyForm.setGrecaptchaResponse('');
-                ApplyForm.resetCaptcha();
-            }
-        },
-
-        showSuccessModal: function(title,message){
-            if (title !== undefined) {
-                $('#popup-success').find('h2').html(title);
-            }
-
-            if (message !== undefined) {
-                $('#popup-success').find('h3').html(message);
-            }
-            
-            Popup.show('popup-success');
-
-            setTimeout(function () {
-                Popup.hide('popup-success');
-            }, ApplyForm.modal_timeout);
-        },
-
-        showErrorModal: function(title, message){
-            if (title !== undefined) {
-                $('#popup-error').find('h2').html(title);
-            }
-
-            if (message !== undefined) {
-                $('#popup-error').find('h3').html(message);
-            }
-            Popup.show('popup-error');
-
-            setTimeout(function () {
-                Popup.hide('popup-error');
-            }, ApplyForm.modal_timeout);
         },
 
         initApplyForms: function () {

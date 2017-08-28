@@ -30,11 +30,6 @@ abstract class AbstractApplyForm extends Model
 
     private $message = '';
 
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-    }
-
     final protected function inputCleaner(): ApplyFormInputCleaner
     {
         if (!$this->inputCleaner) {
@@ -170,6 +165,11 @@ abstract class AbstractApplyForm extends Model
 		return $mail->send();
 	}
 
+	protected function customCallback(array $preparedData)
+    {
+        return true;
+    }
+
 	private function fire()
     {
         if (!$this->validateCaptcha()) {
@@ -189,10 +189,11 @@ abstract class AbstractApplyForm extends Model
 
         $this->sendMail($preparedMailData);
 
+        $this->customCallback($preparedData);
+
         return true;
     }
 
-    //fixme uncomment transaction
     final public function apply(): bool
     {
         //fixme redo responsing for this method
