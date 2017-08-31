@@ -1,4 +1,6 @@
 <script>
+    ApplyForm.setGrecaptchaEnabled(true);
+
     function GrecaptchaCallback(response){
         ApplyForm.setGrecaptchaResponse(response);
         ApplyForm.submitActiveForm()

@@ -15,7 +15,7 @@ return [
      * @link https://www.google.com/recaptcha/admin
      */
     'grecaptcha' => [
-        'enabled'    => true,
+        'enabled'    => false,
         'site_key'   => '',
         'secret_key' => ''
     ],

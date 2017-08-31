@@ -4,8 +4,8 @@
 ))  !!}
 
 <script>
+    ApplyForm.setLangPrefix('{{App::getLocale() != config('translations.config.def_locale') ? "/" . App::getLocale() : ''}}')
     ApplyForm.setApplyForms({!!json_encode(array_keys(config('apply_form.apply_form.apply_forms')))!!})
-    ApplyForm.setGrecaptchaEnabled({{config('apply_form.apply_form.grecaptcha.enabled')}});
 
     $(document).ready(function () {
         ApplyFormRules.init();

@@ -2,13 +2,19 @@
 
 var ApplyForm =
     {
+        lang_prefix: '',
+
         apply_forms: [
 
         ],
         active_apply_form_name: '',
 
-        grecaptcha_enabled: true,
+        grecaptcha_enabled: false,
         grecaptcha_response : '',
+
+        setLangPrefix: function (langPrefix) {
+            ApplyForm.lang_prefix = langPrefix;
+        },
 
         setApplyForms: function (applyForms) {
             ApplyForm.apply_forms = applyForms;
@@ -19,7 +25,7 @@ var ApplyForm =
         },
 
         setGrecaptchaEnabled: function (value) {
-            ApplyForm.grecaptcha_enabled = !!value;
+            ApplyForm.grecaptcha_enabled = value;
         },
 
         setGrecaptchaResponse: function (response) {
@@ -43,11 +49,6 @@ var ApplyForm =
             form.find(".btn_upload, .file_name_placeholder").show();
             form.find(".btn_delete, .file_name").hide();
             ApplyForm.setActiveForm('');
-
-            if (ApplyForm.grecaptcha_enabled) {
-                ApplyForm.setGrecaptchaResponse('');
-                ApplyForm.resetCaptcha();
-            }
         },
 
         successCallback: function(message){
@@ -69,7 +70,7 @@ var ApplyForm =
             data.append('grecaptcha_response', ApplyForm.grecaptcha_response);
 
             $.ajax({
-                url: App.lang_segment + '/apply-form/' + ApplyForm.active_apply_form_name,
+                url: ApplyForm.lang_prefix + '/apply-form/' + ApplyForm.active_apply_form_name,
                 type: 'POST',
                 dataType: 'json',
                 cache: false,
@@ -86,6 +87,11 @@ var ApplyForm =
                     }
                 }
             });
+
+            if (ApplyForm.grecaptcha_enabled) {
+                ApplyForm.setGrecaptchaResponse('');
+                ApplyForm.resetCaptcha();
+            }
         },
 
         initApplyForms: function () {
