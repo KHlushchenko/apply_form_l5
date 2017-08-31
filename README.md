@@ -1,5 +1,5 @@
-# Articles
-Пакет для Laravel 5.4+ предназначенный работы с формами. 
+# Apply Form
+Пакет Laravel 5 предназначенный для работы с формами. 
 Требует и автоматически устанавливает пакет https://github.com/arturishe21/mail_templates_l5 для работы с отправкой писем.
 Поддерживает интеграцию с Google Invisible reCaptcha.
 
@@ -7,8 +7,8 @@
 1. [Установка](#Установка)
 2. [VIS-CMS](#VIS-CMS)
 3. [Настройка](#Настройка)
-4. [Пример использования](#Пример_использования)
-5. [Детальное описание классов](#Детальное_описание_классов)
+4. [Пример использования](#Пример-использования)
+5. [Описание классов](#Описание-классов)
 
 ## Установка
 Выполняем
@@ -138,7 +138,7 @@ ApplyForm.failCallback = function (message) {
     ),
 ```
 
-## Пример_использования
+## Пример использования
 1. Определяем класс, который рассширяет класс Vis\ApplyForm\Models\AbstractApplyForm
 
 ```php
@@ -155,13 +155,13 @@ class ApplyFormAnonymousMessage extends AbstractApplyForm
         'file'    => 'required|max:3072|mimes:pdf,doc,docx'
     ];
     
-    protected $fileFieldName = 'file';
+    protected $fileFieldName     = 'file';
     protected $fileStorageFolder = 'storage/apply_form_files/apply_form_anonymous_messages/';
 
     protected $mailTemplate    = 'shablon-zajavka-anonimnoe-obrashenie';
     protected $mailAddressSlug = 'email-zajavka-anonimnoe-obrashenie';
-    
-    protected $messageSlug     = 'uspeh-sohraneniya';
+
+    protected $messageSlug     = 'soobshchenie-zajavka-anonimnoe-obrashenie';
 
     protected function prepareInputData(array $inputData): array
     {
@@ -169,8 +169,7 @@ class ApplyFormAnonymousMessage extends AbstractApplyForm
 
         $preparedData = [
             'message' => $this->inputCleaner()->getCleanStringFromArray('message'),
-            'file' => $this->inputCleaner()->getStringFromArray('file'),
-
+            'file'    => $this->inputCleaner()->getStringFromArray('file'),
         ];
 
         return $preparedData;
@@ -198,7 +197,23 @@ class ApplyFormAnonymousMessage extends AbstractApplyForm
     ],
 ```
 
-3. Дописываем в файл public/js/apply_form_rules.js правила jquery validation </br>
+3. Создаем форму в шаблонах с названием 'название_формы_form'
+```html
+<form id="anonymous_message_form">
+    <div class="form-field">
+        <textarea name='message' placeholder="сообщение" ></textarea>
+    </div>
+    <div class="form-field">
+        <input type="file" class="file-input" placeholder="file" id="file" name="file"
+           accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf">
+    </div>
+    <div class="form-button">
+        <button type="submit" class="btn">отправить</button>
+    </div>
+</form>
+```
+
+4. Дописываем в файл public/js/apply_form_rules.js правила jquery validation </br>
 Правила определяются как 'название_формы_rules' и 'название_формы_messages' 
 ```js
     ApplyForm.anonymous_message_rules = {
@@ -213,7 +228,7 @@ class ApplyFormAnonymousMessage extends AbstractApplyForm
 ```
 
 
-## Детальное описание классов
+## Описание классов
 1. Класс расширяемый классом Vis\ApplyForm\Models\AbstractApplyForm </br>
 ```php
 namespace App\Models\ApplyForm;
