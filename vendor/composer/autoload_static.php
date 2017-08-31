@@ -22,6 +22,7 @@ class ComposerStaticInit7d6828a8f97faa178ed9a3d00355b78d
 
     public static $classMap = array (
         'Vis\\ApplyForm\\Controllers\\ApplyFormController' => __DIR__ . '/../..' . '/src/Http/Controllers/ApplyFormController.php',
+        'Vis\\ApplyForm\\Helpers\\InputCleaner' => __DIR__ . '/../..' . '/src/Helpers/InputCleaner.php',
         'Vis\\ApplyForm\\Models\\AbstractApplyForm' => __DIR__ . '/../..' . '/src/Models/AbstractApplyForm.php',
         'Vis\\ApplyForm\\Models\\AbstractApplyFormSetting' => __DIR__ . '/../..' . '/src/Models/AbstractApplyFormSetting.php',
         'Vis\\ApplyForm\\Models\\ApplyFormFactory' => __DIR__ . '/../..' . '/src/Models/ApplyFormFactory.php',

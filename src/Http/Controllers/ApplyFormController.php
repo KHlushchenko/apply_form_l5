@@ -6,8 +6,16 @@ use Illuminate\Support\Facades\Input;
 
 use Vis\ApplyForm\Models\ApplyFormFactory;
 
+/**
+ * Class ApplyFormController
+ * @package Vis\ApplyForm\Controllers
+ */
 class ApplyFormController extends Controller
 {
+    /** Entry point for applyForm
+     * @param string $slug
+     * @return mixed
+     */
     public function doApplyForm(string $slug)
     {
         $applyForm = ApplyFormFactory::create($slug)->setInputData(Input::all());

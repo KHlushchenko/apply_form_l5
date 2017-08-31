@@ -11,33 +11,90 @@ use Vis\MailTemplates\MailT;
 
 use Vis\ApplyForm\Helpers\InputCleaner;
 
+/**
+ * Class AbstractApplyForm
+ * @package Vis\ApplyForm\Models
+ */
 abstract class AbstractApplyForm extends Model
 {
-	protected $table;
+    /** Defines table of ApplyForm
+     * @var
+     */
+    protected $table;
 
-	protected $fillable = [];
+    /** Defines guarded fields for mass assignment
+     * @var array
+     */
+    protected $guarded = [];
 
+    /** Defines Vis\ApplyForm\Helpers\InputCleaner class
+     * @var
+     */
     private $inputCleaner;
+
+    /** Defines Vis\ApplyForm\Models\ApplyFormSettingEmail class
+     * @var
+     *
+     */
     private $settingEmail;
+
+    /** Defines Vis\ApplyForm\Models\ApplyFormSettingMessage class
+     * @var
+     */
     private $settingMessage;
 
+    /** Defines raw inputData
+     * @var array
+     */
     private $inputData = [];
 
+    /** Defines validation rules
+     * Should be overwritten in implementations
+     * @var array
+     */
     protected $validationRules = [];
 
-    protected $fileFieldName     = '';
+    /** Defines fileFieldName from Input
+     * Optional
+     * Should be overwritten in implementations
+     * @var string
+     */
+    protected $fileFieldName = '';
+
+    /** Defines fileStorageFolder where file will be stored
+     * Optional
+     * Should be overwritten in implementations
+     */
     protected $fileStorageFolder = 'storage/apply_form_files/';
 
-    protected $mailTemplate     = '';
-    protected $mailAddressSlug  = '';
+    /** Defines mailTemplate that will be used with Vis\MailTemplates\MailT class
+     * Optional
+     * Should be overwritten in implementations
+     */
+    protected $mailTemplate = '';
 
-    protected $messageSlug      = 'uspeh-sohraneniya';
+    /** Defines mailAddressSlug for setting in Vis\ApplyForm\Models\ApplyFormSettingEmail class
+     * Optional
+     * Should be overwritten in implementations
+     */
+    protected $mailAddressSlug = '';
 
+    /** Defines return message
+     * @var array
+     */
     private $message = [
         'title'         => '',
         'description'   => '',
     ];
 
+    /** Defines messageSlug for setting in Vis\ApplyForm\Models\ApplyFormSettingMessage class
+     * Should be overwritten in implementations
+     */
+    protected $messageSlug = 'uspeh-sohraneniya';
+
+    /** Initializes Vis\ApplyForm\Helpers\InputCleaner object
+     * @return InputCleaner
+     */
     final protected function inputCleaner(): InputCleaner
     {
         if (!$this->inputCleaner) {
@@ -47,15 +104,9 @@ abstract class AbstractApplyForm extends Model
         return $this->inputCleaner;
     }
 
-    final protected function settingMessage(): ApplyFormSettingMessage
-    {
-        if (!$this->settingMessage) {
-            $this->settingMessage = new ApplyFormSettingMessage();
-        }
-
-        return $this->settingMessage;
-    }
-
+    /** Initializes Vis\ApplyForm\Models\ApplyFormSettingEmail object
+     * @return ApplyFormSettingEmail
+     */
     final protected function settingEmail(): ApplyFormSettingEmail
     {
         if (!$this->settingEmail) {
@@ -65,43 +116,78 @@ abstract class AbstractApplyForm extends Model
         return $this->settingEmail;
     }
 
+    /** Initializes Vis\ApplyForm\Models\ApplyFormSettingMessage object
+     * @return ApplyFormSettingMessage
+     */
+    final protected function settingMessage(): ApplyFormSettingMessage
+    {
+        if (!$this->settingMessage) {
+            $this->settingMessage = new ApplyFormSettingMessage();
+        }
+
+        return $this->settingMessage;
+    }
+
+    /** Sets input raw inputData
+     * @param array $inputData
+     * @return $this
+     */
     final public function setInputData(array $inputData)
     {
         $this->inputData = $inputData;
 
         return $this;
     }
-	private function getInputData(): array
+
+    /** Gets raw InputData
+     * @return array
+     */
+    private function getInputData(): array
 	{
 		return $this->inputData;
 	}
 
+    /** Gets validationRules
+     * @return array
+     */
     private function getValidationRules(): array
     {
         return $this->validationRules;
     }
 
+    /** Gets fileFieldName
+     * @return string
+     */
     private function getFileFieldName(): string
     {
         return $this->fileFieldName;
     }
 
+    /** Gets fileStorageFolder
+     * @return string
+     */
     private function getFileStorageFolder(): string
     {
         return $this->fileStorageFolder;
     }
 
+    /** Gets mailTemplate
+     * @return string
+     */
     private function getMailTemplate(): string
 	{
 		return $this->mailTemplate;
 	}
 
+    /** Gets mailAddressSlug
+     * @return string
+     */
     private function getMailAddressSlug(): string
 	{
 		return $this->mailAddressSlug;
 	}
 
-    /**
+    /** Gets messageSlug
      * @return string
      */
     private function getMessageSlug(): string
@@ -109,16 +195,25 @@ abstract class AbstractApplyForm extends Model
         return $this->messageSlug;
     }
 
+    /** Sets message
+     * @param array $message
+     */
     private function setMessage(array $message)
     {
         $this->message = $message;
     }
 
+    /** Gets Message
+     * @return array
+     */
     public function getMessage(): array
     {
         return $this->message;
     }
 
+    /** Validates Google ReCaptcha
+     * @return bool
+     */
     private function validateCaptcha(): bool
     {
         if (!isset($this->getInputData()['grecaptcha_response'])) {
@@ -145,6 +240,9 @@ abstract class AbstractApplyForm extends Model
         return true;
     }
 
+    /** Validates inputData with validationRules
+     * @return bool
+     */
     private function validate(): bool
     {
         $validator = Validator::make($this->getInputData(), $this->getValidationRules());
@@ -157,6 +255,9 @@ abstract class AbstractApplyForm extends Model
         return true;
     }
 
+    /** Prepares inputFile
+     * @return bool|mixed
+     */
     private function prepareFile()
     {
         if (!$this->getFileFieldName()) {
@@ -182,28 +283,49 @@ abstract class AbstractApplyForm extends Model
         return $file;
     }
 
+    /** Converts raw input into prepared data
+     * Should be overwritten in implementations
+     * @param array $inputData
+     * @return array
+     */
     abstract protected function prepareInputData(array $inputData): array;
 
-    abstract protected function prepareMailData(array $preparedData): array;
+    /** Converts prepared data into mail data
+     * Can be overwritten in implementations
+     * @param array $preparedData
+     * @return array
+     */
+    protected function prepareMailData(array $preparedData): array
+    {
+        return $preparedData;
+    }
 
-	private function sendMail($preparedMailData): bool
+    /** Sends email letter with use Vis\MailTemplates\MailT class
+     * @param array $preparedMailData
+     * @return bool
+     */
+    private function sendMail(array $preparedMailData): bool
 	{
-        if (!$this->getMailTemplate()) {
-            return false;
-        }
-
 		$mail = new MailT($this->getMailTemplate(), $preparedMailData);
         $mail->to = $this->settingEmail()->get($this->getMailAddressSlug());
 
 		return $mail->send();
 	}
 
-	protected function customCallback()
+    /** Custom callback method. Insert whatever additional logic you need here (Sending applyForm to API, etc.)
+     * Can be overwritten in implementations
+     * @param  array $attributes
+     * @return bool
+     */
+    protected function customCallback(array $attributes)
     {
         return true;
     }
 
-	private function fire()
+    /** Main method that fires ApplyForm saving
+     * @return bool
+     */
+    private function fire()
     {
         if (!$this->validateCaptcha()) {
             return false;
@@ -214,19 +336,23 @@ abstract class AbstractApplyForm extends Model
         }
 
         $this->prepareFile();
-        $preparedData     = $this->prepareInputData($this->getInputData());
-        $preparedMailData = $this->prepareMailData($preparedData);
 
+        $preparedData = $this->prepareInputData($this->getInputData());
         $this->fill($preparedData);
         $this->save();
 
-        $this->sendMail($preparedMailData);
+        if ($this->getMailTemplate()) {
+            $this->sendMail($this->prepareMailData($preparedData));
+        }
 
-        $this->customCallback();
+        $this->customCallback($this->getAttributes());
 
         return true;
     }
 
+    /** Public method for externally calling fire() on ApplyForm
+     * @return bool
+     */
     final public function apply(): bool
     {
         $status = false;

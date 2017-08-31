@@ -3,6 +3,10 @@
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Class ApplyFormServiceProvider
+ * @package Vis\ApplyForm
+ */
 class ApplyFormServiceProvider extends ServiceProvider
 {
 
@@ -62,6 +66,9 @@ class ApplyFormServiceProvider extends ServiceProvider
     {
     }
 
+    /**
+     *
+     */
     public function provides()
     {
     }
