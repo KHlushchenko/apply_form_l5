@@ -10,14 +10,12 @@ class ApplyFormController extends Controller
 {
     public function doApplyForm(string $slug)
     {
-        //fixme return response
         $applyForm = ApplyFormFactory::create($slug)->setInputData(Input::all());
 
         return response()->json([
             'status'  => $applyForm->apply(),
             'message' => $applyForm->getMessage(),
         ]);
-
     }
 
 }

@@ -6,9 +6,10 @@ use Illuminate\Support\Facades\DB;
 
 use \Request;
 use \Validator;
-use \Setting;
 
 use Vis\MailTemplates\MailT;
+
+use Vis\ApplyForm\Helpers\InputCleaner;
 
 abstract class AbstractApplyForm extends Model
 {
@@ -17,38 +18,62 @@ abstract class AbstractApplyForm extends Model
 	protected $fillable = [];
 
     private $inputCleaner;
+    private $settingEmail;
+    private $settingMessage;
 
     private $inputData = [];
 
     protected $validationRules = [];
 
-    protected $fileFieldName = '';
+    protected $fileFieldName     = '';
     protected $fileStorageFolder = 'storage/apply_form_files/';
 
-    protected $mailTemplate = '';
-    protected $mailAddressSettingName  = '';
+    protected $mailTemplate     = '';
+    protected $mailAddressSlug  = '';
 
-    private $message = '';
+    protected $messageSlug      = 'uspeh-sohraneniya';
 
-    final protected function inputCleaner(): ApplyFormInputCleaner
+    private $message = [
+        'title'         => '',
+        'description'   => '',
+    ];
+
+    final protected function inputCleaner(): InputCleaner
     {
         if (!$this->inputCleaner) {
-            $this->inputCleaner = new ApplyFormInputCleaner();
+            $this->inputCleaner = new InputCleaner();
         }
 
         return $this->inputCleaner;
     }
 
+    final protected function settingMessage(): ApplyFormSettingMessage
+    {
+        if (!$this->settingMessage) {
+            $this->settingMessage = new ApplyFormSettingMessage();
+        }
+
+        return $this->settingMessage;
+    }
+
+    final protected function settingEmail(): ApplyFormSettingEmail
+    {
+        if (!$this->settingEmail) {
+            $this->settingEmail = new ApplyFormSettingEmail();
+        }
+
+        return $this->settingEmail;
+    }
+
+    final public function setInputData(array $inputData)
+    {
+        $this->inputData = $inputData;
+
+        return $this;
+    }
 	private function getInputData(): array
 	{
 		return $this->inputData;
-	}
-
-	final public function setInputData(array $inputData)
-	{
-		$this->inputData = $inputData;
-
-		return $this;
 	}
 
     private function getValidationRules(): array
@@ -71,17 +96,25 @@ abstract class AbstractApplyForm extends Model
 		return $this->mailTemplate;
 	}
 
-    private function getMailAddressSettingName(): string
+    private function getMailAddressSlug(): string
 	{
-		return $this->mailAddressSettingName;
+		return $this->mailAddressSlug;
 	}
 
-    final public function setMessage(string $message)
+    /**
+     * @return string
+     */
+    private function getMessageSlug(): string
+    {
+        return $this->messageSlug;
+    }
+
+    private function setMessage(array $message)
     {
         $this->message = $message;
     }
 
-    final public function getMessage(): string
+    public function getMessage(): array
     {
         return $this->message;
     }
@@ -89,6 +122,7 @@ abstract class AbstractApplyForm extends Model
     private function validateCaptcha(): bool
     {
         if (!isset($this->getInputData()['grecaptcha_response'])) {
+            $this->setMessage($this->settingMessage()->get('oshibka-kapchi'));
             return false;
         }
 
@@ -102,7 +136,7 @@ abstract class AbstractApplyForm extends Model
 
         $response = json_decode(file_get_contents($url));
         if ($response->success == false) {
-            $this->setMessage('captcha');
+            $this->setMessage($this->settingMessage()->get('oshibka-kapchi'));
             return false;
         }
 
@@ -116,7 +150,7 @@ abstract class AbstractApplyForm extends Model
         $validator = Validator::make($this->getInputData(), $this->getValidationRules());
 
         if ($validator->fails()) {
-            $this->setMessage($validator->errors());
+            $this->setMessage($this->settingMessage()->get('oshibka-validacii'));
             return false;
         }
 
@@ -133,7 +167,6 @@ abstract class AbstractApplyForm extends Model
             return false;
         }
 
-        //fixme think about array of files
         $file = $this->getInputData()[$this->getFileFieldName()];
 
         $fileName = md5_file($file->getPathName()) . '_' . time() . "." . $file->getClientOriginalExtension();
@@ -160,12 +193,12 @@ abstract class AbstractApplyForm extends Model
         }
 
 		$mail = new MailT($this->getMailTemplate(), $preparedMailData);
-        $mail->to = Setting::get($this->getMailAddressSettingName());
+        $mail->to = $this->settingEmail()->get($this->getMailAddressSlug());
 
 		return $mail->send();
 	}
 
-	protected function customCallback(array $preparedData)
+	protected function customCallback()
     {
         return true;
     }
@@ -189,27 +222,33 @@ abstract class AbstractApplyForm extends Model
 
         $this->sendMail($preparedMailData);
 
-        $this->customCallback($preparedData);
+        $this->customCallback();
 
         return true;
     }
 
     final public function apply(): bool
     {
-        //fixme redo responsing for this method
+        $status = false;
+
         if (config('apply_form.apply_form.transaction_enabled')) {
             DB::beginTransaction();
             try {
-                $this->fire();
-                DB::commit();
+                if ($status = $this->fire()) {
+                    $this->setMessage($this->settingMessage()->get($this->getMessageSlug()));
+                    DB::commit();
+                }
             } catch (Exception $e) {
+                $this->setMessage($this->settingMessage()->get('oshibka-sohraneniya'));
                 DB::rollBack();
             }
         } else {
-            $this->fire();
+            if ($status = $this->fire()) {
+                $this->setMessage($this->settingMessage()->get($this->getMessageSlug()));
+            }
         }
 
-        return true;
+        return $status;
     }
 
 }

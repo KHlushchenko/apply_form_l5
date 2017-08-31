@@ -23,6 +23,12 @@ class ApplyFormServiceProvider extends ServiceProvider
             __DIR__ . '/config' => config_path('apply_form/')
         ], 'apply_form_config');
 
+        if (file_exists(config_path('builder/tb-definitions/'))) {
+            $this->publishes([
+                __DIR__ . '/published/tb-definitions/' => config_path('builder/tb-definitions/')
+            ], 'apply_form_nodes');
+        }
+
         $this->publishes([
             __DIR__ . '/published/js/apply_form.js' => public_path('packages/vis/apply_form/apply_form.js'),
         ], 'public');

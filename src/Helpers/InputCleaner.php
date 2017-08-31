@@ -1,7 +1,7 @@
 <?php
-namespace Vis\ApplyForm\Models;
+namespace Vis\ApplyForm\Helpers;
 
-class ApplyFormInputCleaner
+class InputCleaner
 {
     private $array = [];
 

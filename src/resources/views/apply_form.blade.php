@@ -4,7 +4,7 @@
 ))  !!}
 
 <script>
-    ApplyForm.setLangPrefix('{{App::getLocale() != config('translations.config.def_locale') ? "/" . App::getLocale() : ''}}')
+    ApplyForm.setLangPrefix('{{App::getLocale() !== config('translations.config.def_locale') ? "/" . App::getLocale() : ''}}')
     ApplyForm.setApplyForms({!!json_encode(array_keys(config('apply_form.apply_form.apply_forms')))!!})
 
     $(document).ready(function () {
