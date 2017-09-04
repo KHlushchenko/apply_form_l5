@@ -47,6 +47,7 @@ return array(
             'is_sorting' => true,
             'field' => 'string',
             'width' => "25%",
+            "readonly_for_edit" => true,
         ),
         'emails' => array(
             'caption' => 'Список E-mail',
