@@ -67,8 +67,10 @@ var ApplyForm =
             var $form = $('#' + ApplyForm.active_apply_form_name + '_form');
             var data = new FormData($form[0]);
 
-            data.append('grecaptcha_response', ApplyForm.grecaptcha_response);
-
+            if (ApplyForm.grecaptcha_enabled) {
+                data.append('grecaptcha_response', ApplyForm.grecaptcha_response);
+            }
+            
             $.ajax({
                 url: ApplyForm.lang_prefix + '/apply-form/' + ApplyForm.active_apply_form_name,
                 type: 'POST',

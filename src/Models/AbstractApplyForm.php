@@ -216,6 +216,10 @@ abstract class AbstractApplyForm extends Model
      */
     private function validateCaptcha(): bool
     {
+        if(!config('apply_form.apply_form.grecaptcha.enabled')){
+            return true;
+        }
+
         if (!isset($this->getInputData()['grecaptcha_response'])) {
             $this->setMessage($this->settingMessage()->get('oshibka-kapchi'));
             return false;
