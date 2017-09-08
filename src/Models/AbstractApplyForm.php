@@ -4,6 +4,7 @@ namespace Vis\ApplyForm\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+use \Exception;
 use \Request;
 use \Validator;
 
@@ -310,7 +311,7 @@ abstract class AbstractApplyForm extends Model
      */
     private function sendMail(array $preparedMailData): bool
 	{
-		$mail = new MailT($this->getMailTemplate(), $preparedMailData);
+        $mail = new MailT($this->getMailTemplate(), $preparedMailData);
         $mail->to = $this->settingEmail()->get($this->getMailAddressSlug());
 
 		return $mail->send();

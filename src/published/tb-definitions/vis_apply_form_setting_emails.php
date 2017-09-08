@@ -3,7 +3,7 @@ return array(
     'db' => array(
         'table' => 'vis_apply_form_setting_emails',
         'order' => array(
-            'created_at' => 'desc',
+            'id' => 'desc',
         ),
         'pagination' => array(
             'per_page' => 50,
@@ -31,7 +31,7 @@ return array(
             'class' => 'col-id',
             'width' => '1%',
             'hide' => true,
-            'is_sorting' => false
+            'is_sorting' => true
         ),
         'slug' => array(
             'caption' => 'Слаг',
@@ -39,6 +39,7 @@ return array(
             'filter' => 'text',
             'field' => 'string',
             'width' => "25%",
+            'is_sorting' => true
         ),
         'title' => array(
             'caption' => 'Название',

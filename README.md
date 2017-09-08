@@ -159,9 +159,9 @@ class ApplyFormAnonymousMessage extends AbstractApplyForm
     protected $fileStorageFolder = 'storage/apply_form_files/apply_form_anonymous_messages/';
 
     protected $mailTemplate    = 'shablon-zajavka-anonimnoe-obrashenie';
-    protected $mailAddressSlug = 'email-zajavka-anonimnoe-obrashenie';
+    protected $mailAddressSlug = 'email-zayavka-anonimnoe-obrashenie';
 
-    protected $messageSlug     = 'soobshchenie-zajavka-anonimnoe-obrashenie';
+    protected $messageSlug     = 'soobshchenie-zayavka-anonimnoe-obrashenie';
 
     protected function prepareInputData(array $inputData): array
     {
