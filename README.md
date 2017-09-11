@@ -160,8 +160,8 @@ class ApplyFormAnonymousMessage extends AbstractApplyForm
         $this->inputCleaner()->setArray($inputData);
 
         $preparedData = [
-            'message' => $this->inputCleaner()->getCleanStringFromArray('message'),
-            'file'    => $this->inputCleaner()->getStringFromArray('file'),
+            'message' => $this->inputCleaner()->getCleanString('message'),
+            'file'    => $this->inputCleaner()->getString('file'),
         ];
 
         return $preparedData;
@@ -337,33 +337,33 @@ class ApplyFormAnonymousMessage extends AbstractApplyForm
 Значение: строка</br>
 Возвращаемое значение: значение из массива или null
 ```php
-    public function getFromArray(string $field)
+    public function get(string $field)
 ```
 
 Метод получения целочисленного значения по названию поля из массива данных</br>
 Значение: строка</br>
 Возвращаемое значение: целое число
 ```php
-    public function getIntFromArray(string $field): int
+    public function getInt(string $field): int
 ```
 
 Метод получения дробногочисленного значения по названию поля из массива данных</br>
 Значение: строка</br>
 Возвращаемое значение: дробное число
 ```php
-    public function getFloatFromArray(string $field): float
+    public function getFloat(string $field): float
 ```
 
 Метод получения строчного значения по названию поля из массива данных</br>
 Значение: строка</br>
 Возвращаемое значение: дробное число
 ```php
-    public function getStringFromArray(string $field): string
+    public function getString(string $field): string
 ```
 
 Метод получения очищенного строчного значения по названию поля из массива данных</br>
 Значение: строка</br>
 Возвращаемое значение: дробное число
 ```php
-    public function getCleanStringFromArray(string $field): string
+    public function getCleanString(string $field): string
 ```

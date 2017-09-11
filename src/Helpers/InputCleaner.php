@@ -32,7 +32,7 @@ class InputCleaner
      * @param string $field
      * @return mixed
      */
-    public function getFromArray(string $field)
+    public function get(string $field)
     {
         return $this->getArray()[$field] ?? null;
     }
@@ -41,36 +41,36 @@ class InputCleaner
      * @param string $field
      * @return int
      */
-    public function getIntFromArray(string $field): int
+    public function getInt(string $field): int
     {
-        return (int)$this->getFromArray($field);
+        return (int)$this->get($field);
     }
 
     /** Returns value as float
      * @param string $field
      * @return float
      */
-    public function getFloatFromArray(string $field): float
+    public function getFloat(string $field): float
     {
-        return (float)$this->getFromArray($field);
+        return (float)$this->get($field);
     }
 
     /** Returns value as string
      * @param string $field
      * @return string
      */
-    public function getStringFromArray(string $field): string
+    public function getString(string $field): string
     {
-        return (string)$this->getFromArray($field);
+        return (string)$this->get($field);
     }
 
     /** Returns value as clean string
      * @param string $field
      * @return string
      */
-    public function getCleanStringFromArray(string $field): string
+    public function getCleanString(string $field): string
     {
-        return htmlspecialchars(trim($this->getStringFromArray($field)));
+        return htmlspecialchars(trim($this->getString($field)));
     }
 
 }
