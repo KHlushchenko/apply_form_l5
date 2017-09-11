@@ -20,10 +20,5 @@ return [
         'secret_key' => ''
     ],
 
-    /**
-     * Enables transaction in ApplyForm saving method
-     * Recommended false in development and true in production
-     */
-    'transaction_enabled' => true,
 
 ];

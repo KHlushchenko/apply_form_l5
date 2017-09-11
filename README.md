@@ -46,15 +46,7 @@
         'secret_key' => ''
     ],
 ```
-Включаем или выключаем сохранение формы заявки с использованием транзакции <br>
-Желательно использовать значение false при разработке и true при експлутации приложения.
-```php
-    /**
-     * Enables transaction in ApplyForm saving method
-     * Recommended false in development and true in production
-     */
-    'transaction_enabled' => false,
-```
+
 
 В файле public/js/apply_form_rules.js переопределяем методы и указываем в них свои действия(например, вызов попапа с кастомным сообщением) по выполнению ajax запроса
 ```js

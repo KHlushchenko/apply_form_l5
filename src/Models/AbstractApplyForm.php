@@ -5,7 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-
 use \Exception;
 use \Request;
 use \Validator;
@@ -364,22 +363,16 @@ abstract class AbstractApplyForm extends Model
     {
         $status = false;
 
-        if (config('apply_form.apply_form.transaction_enabled')) {
-            DB::beginTransaction();
-            try {
-                if ($status = $this->fire()) {
-                    $this->setMessage($this->settingMessage()->get($this->getMessageSlug()));
-                    DB::commit();
-                }
-            } catch (Exception $e) {
-                $this->setMessage($this->settingMessage()->get('oshibka-sohraneniya'));
-                DB::rollBack();
-                Log::critical($e->getMessage());
-            }
-        } else {
+        DB::beginTransaction();
+        try {
             if ($status = $this->fire()) {
                 $this->setMessage($this->settingMessage()->get($this->getMessageSlug()));
+                DB::commit();
             }
+        } catch (Exception $e) {
+            $this->setMessage($this->settingMessage()->get('oshibka-sohraneniya'));
+            DB::rollBack();
+            Log::critical($e->getMessage());
         }
 
         return $status;
