@@ -3,6 +3,8 @@ namespace Vis\ApplyForm\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 use \Exception;
 use \Request;
@@ -372,6 +374,7 @@ abstract class AbstractApplyForm extends Model
             } catch (Exception $e) {
                 $this->setMessage($this->settingMessage()->get('oshibka-sohraneniya'));
                 DB::rollBack();
+                Log::critical($e->getMessage());
             }
         } else {
             if ($status = $this->fire()) {
