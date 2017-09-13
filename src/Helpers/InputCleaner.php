@@ -73,4 +73,13 @@ class InputCleaner
         return htmlspecialchars(trim($this->getString($field)));
     }
 
+    /** Returns value as json string
+     * @param string $field
+     * @return string
+     */
+    public function getJson(string $field): string
+    {
+        return json_encode($this->get($field));
+    }
+
 }

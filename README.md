@@ -411,3 +411,10 @@ class ApplyFormAuthorizedMessage extends AbstractApplyForm
 ```php
     public function getCleanString(string $field): string
 ```
+
+Метод получения json строки по названию поля из массива данных</br>
+Значение: строка</br>
+Возвращаемое значение: строка json
+```php
+    public function getJson(string $field): string
+```
