@@ -28,7 +28,12 @@
 
 Публикуем config, js, nodes
 ```php
-    php artisan vendor:publish --provider="Vis\ApplyForm\ApplyFormserviceProvider" --force
+    php artisan vendor:publish --provider="Vis\ApplyForm\ApplyFormServiceProvider" --force
+```
+
+Добавляем в layouts.default(или на конкретную вьюху, если заявка только на одной странице) перед закрывающим тегом </body>
+```php
+@include('apply_form::apply_form')
 ```
 
 ## Настройка
@@ -87,7 +92,7 @@ ApplyForm.failCallback = function (message) {
                     return Sentinel::hasAccess('admin.apply_form.view');
                 },
                 'submenu' => array(
-                //определение tb-definitions для форм заявок
+                    //определение tb-definitions для форм заявок
                 )
             ),
             array(
@@ -138,38 +143,42 @@ namespace App\Models\ApplyForm;
 
 use Vis\ApplyForm\Models\AbstractApplyForm;
 
-class ApplyFormAnonymousMessage extends AbstractApplyForm
+class ApplyFormAuthorizedMessage extends AbstractApplyForm
 {
-	protected $table = 'apply_form_anonymous_messages';
+	protected $table = "apply_form_authorized_messages";
 
 	protected $validationRules = [
-        'message' => 'required|min:10|max:2000',
-        'file'    => 'required|max:3072|mimes:pdf,doc,docx'
+        "personal_data" => 'required|integer|in:1',
+        'name'          => 'alpha|min:4|max:64',
+        'answer_type'   => 'required|in:phone,email',
+        'phone'         => 'nullable|required_if:answer_type,phone|size:19|regex:/\+38 \((\d{3})\) \d{3}-\d{2}-\d{2}/',
+        'email'         => 'nullable|required_if:answer_type,email|email|min:4|max:64',
+        'message'       => 'required|min:10|max:2000'
     ];
-    
-    protected $fileFieldName     = 'file';
-    protected $fileStorageFolder = 'storage/apply_form_files/apply_form_anonymous_messages/';
 
-    protected $mailTemplate    = 'shablon-zajavka-anonimnoe-obrashenie';
-    protected $mailAddressSlug = 'email-zayavka-anonimnoe-obrashenie';
-
-    protected $messageSlug     = 'soobshchenie-zayavka-anonimnoe-obrashenie';
+    protected $mailTemplate    = 'shablon-zajavka-avtorizirovannoe-obrashenie';
+    protected $mailAddressSlug = 'email-zayavka-avtorizirovannoe-obrashenie';
+    protected $messageSlug     = 'soobshchenie-zayavka-avtorizirovannoe-obrashenie';
+    protected $messageFailSlug = 'soobshchenie-fail-zayavka-avtorizirovannoe-obrashenie';
 
     protected function prepareInputData(array $inputData): array
     {
         $this->inputCleaner()->setArray($inputData);
 
         $preparedData = [
-            'message' => $this->inputCleaner()->getCleanString('message'),
-            'file'    => $this->inputCleaner()->getString('file'),
+            'name'        => $this->inputCleaner()->getCleanString('name'),
+            'answer_type' => $this->inputCleaner()->getString('answer_type'),
+            'phone'       => $this->inputCleaner()->getString('phone'),
+            'email'       => $this->inputCleaner()->getCleanString('email'),
+            'message'     => $this->inputCleaner()->getCleanString('message'),
         ];
 
         return $preparedData;
     }
-    
+
     protected function prepareMailData(array $preparedData): array
     {
-        $preparedData['file_url'] = asset($preparedData['file']);
+        $preparedData['answer_type'] = $preparedData['answer_type'] == 'email' ? 'Email' : 'Телефон';
 
         return $preparedData;
     }
@@ -185,22 +194,43 @@ class ApplyFormAnonymousMessage extends AbstractApplyForm
 
 ```php
     'apply_forms' => [
-        'anonymous_message' => App\Models\ApplyForm\ApplyFormAnonymousMessage::class,
+        'authorized_messages' => App\Models\ApplyForm\ApplyFormAuthorizedMessage::class,
     ],
 ```
 
-3. Создаем форму в шаблонах с названием 'название_формы_form'
+3. Создаем форму в шаблонах с названием 'название_формы_form', например такую:
 ```html
-<form id="anonymous_message_form">
+<form id="authorized_message_form">
     <div class="form-field">
-        <textarea name='message' placeholder="сообщение" ></textarea>
+        <select name="answer_type">
+            <option value="email">{{__t('Отримати відповідь на e-mail')}}</option>
+            <option value="phone">{{__t('Отримати відповідь телефоном')}}</option>
+        </select>
     </div>
     <div class="form-field">
-        <input type="file" class="file-input" placeholder="file" id="file" name="file"
-           accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf">
+        <input type="text" name='name' placeholder="{{__t('ПІБ')}}">
+        <p>{{__t("обов`язкове поле")}}</p>
+    </div>
+    <div class="form-field">
+        <input type="text" name='email' placeholder="E-mail" class="answer-type">
+        <p>{{__t("обов`язкове поле")}}</p>
+    </div>
+    <div class="form-field">
+        <input type="text" name='phone' placeholder="{{__t('Номер телефону')}}" class="answer-type">
+        <p>{{__t("обов`язкове поле")}}</p>
+    </div>
+    <div class="form-field">
+        <textarea name='message' placeholder="{{__t('Повідомлення')}}" ></textarea>
+        <p>{{__t("обов`язкове поле")}}</p>
+    </div>
+    <div class="form-field">
+        <input type="checkbox" name="personal_data" id="authorized_message-personal_data-checkbox" class="checkbox" value="1">
+        <label for="authorized_message-personal_data-checkbox" class="css-label">
+            {{__t("Я згоден на збір та обробку моїх персональних даних, відповідно до")}} <a href="javascript:;">{{__t('Закону України “Про захист персональних даних”')}}</a>
+        </label>
     </div>
     <div class="form-button">
-        <button type="submit" class="btn">отправить</button>
+        <button type="submit" class="btn">{{__t('Відправити')}}</button>
     </div>
 </form>
 ```
@@ -208,17 +238,24 @@ class ApplyFormAnonymousMessage extends AbstractApplyForm
 4. Дописываем в файл public/js/apply_form_rules.js правила jquery validation </br>
 Правила определяются как 'название_формы_rules' и 'название_формы_messages' 
 ```js
-    ApplyForm.anonymous_message_rules = {
-        'message': {required: true, rangelength: [10, 2000]},
-        'file'   : {required: true},
-    };
-    
-    ApplyForm.anonymous_message_messages = {
-        'message': {required: '', rangelength: ''},
-        'file'   : {required: ''},
-    };
-```
+ApplyForm.authorized_message_rules = {
+    'personal_data' : { required: true },
+    'answer_type'   : { required: true, responseMethod: true  },
+    'name'          : { required: true, rangelength: [4,64]},
+    'phone'         : { rangelength: [19, 19]},
+    'email'         : { rangelength: [4, 64], email: true },
+    'message'       : { required: true, rangelength: [10, 2000]},
+};
 
+ApplyForm.authorized_message_messages = {
+    'personal_data' : { required: ''},
+    'answer_type'   : { required: '', responseMethod: '',},
+    'name'          : { required: '', rangelength: '' },
+    'phone'         : { rangelength: '' },
+    'email'         : { rangelength: '', email: '' },
+    'message'       : { required: '', rangelength: ''},
+};
+```
 
 ## Описание классов
 1. Класс расширяемый классом Vis\ApplyForm\Models\AbstractApplyForm </br>
@@ -227,7 +264,7 @@ namespace App\Models\ApplyForm;
 
 use Vis\ApplyForm\Models\AbstractApplyForm;
 
-class ApplyFormAnonymousMessage extends AbstractApplyForm
+class ApplyFormAuthorizedMessage extends AbstractApplyForm
 {
 
 }
@@ -290,6 +327,13 @@ class ApplyFormAnonymousMessage extends AbstractApplyForm
 Значение: строка с slug записи класса Vis\ApplyForm\Models\ApplyFormSettingMessage
 ```php
     protected $messageSlug = '';
+```
+
+Возвращаемое сообщение после неудачного сохранения заявки </br> 
+Используется, если после сохранения нужно отправить письмо на почту</br> 
+Значение: строка с slug записи класса Vis\ApplyForm\Models\ApplyFormSettingMessage
+```php
+    protected $messageFailSlug = '';
 ```
 
 **Описание обязательных методов:**

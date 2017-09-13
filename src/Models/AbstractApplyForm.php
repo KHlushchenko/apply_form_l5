@@ -94,6 +94,11 @@ abstract class AbstractApplyForm extends Model
      */
     protected $messageSlug = 'uspeh-sohraneniya';
 
+    /** Defines messageFailSlug for setting in Vis\ApplyForm\Models\ApplyFormSettingMessage class
+     * Should be overwritten in implementations
+     */
+    protected $messageFailSlug = 'oshibka-sohraneniya';
+
     /** Initializes Vis\ApplyForm\Helpers\InputCleaner object
      * @return InputCleaner
      */
@@ -195,6 +200,14 @@ abstract class AbstractApplyForm extends Model
     private function getMessageSlug(): string
     {
         return $this->messageSlug;
+    }
+
+    /** Gets messageSlug
+     * @return string
+     */
+    private function getMessageFailSlug(): string
+    {
+        return $this->messageFailSlug;
     }
 
     /** Sets message
@@ -370,7 +383,7 @@ abstract class AbstractApplyForm extends Model
                 DB::commit();
             }
         } catch (Exception $e) {
-            $this->setMessage($this->settingMessage()->get('oshibka-sohraneniya'));
+            $this->setMessage($this->settingMessage()->get($this->getMessageFailSlug()));
             DB::rollBack();
             Log::critical($e->getMessage());
         }
