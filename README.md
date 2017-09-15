@@ -255,6 +255,26 @@ ApplyForm.authorized_message_messages = {
     'email'         : { rangelength: '', email: '' },
     'message'       : { required: '', rangelength: ''},
 };
+
+ApplyForm.successCallback = function (message) {
+    Popup.showWithMessage('popup-success', message);
+};
+
+ApplyForm.failCallback = function (message) {
+    Popup.showWithMessage('popup-error', message);
+};
+
+//add additional methods for validating inputs
+var ApplyFormRules =
+    {
+        initPhoneMask: function () {
+            $('input[name=phone]').mask('+38 (000) 000-00-00', {clearIfNotMatch: true});
+        },
+
+        init: function () {
+            ApplyFormRules.initPhoneMask();
+        },
+    }
 ```
 
 ## Описание классов
