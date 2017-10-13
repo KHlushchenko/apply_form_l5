@@ -14,7 +14,7 @@ return array(
         'tags' => array('vis_apply_form_setting_emails'),
     ),
     'options' => array(
-        'caption' => 'Список E-mail адресов',
+        'caption' => 'Заявки - Список E-mail адресов',
         'ident' => 'vis_apply_form_setting_emails',
         'form_ident' => 'vis_apply_form_setting_emails-form',
         'form_width' => '920px',

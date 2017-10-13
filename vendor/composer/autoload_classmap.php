@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'Vis\\ApplyForm\\Controllers\\ApplyFormController' => $baseDir . '/src/Http/Controllers/ApplyFormController.php',
     'Vis\\ApplyForm\\Helpers\\InputCleaner' => $baseDir . '/src/Helpers/InputCleaner.php',
+    'Vis\\ApplyForm\\Helpers\\TableHandler' => $baseDir . '/src/Helpers/TableHandler.php',
     'Vis\\ApplyForm\\Models\\AbstractApplyForm' => $baseDir . '/src/Models/AbstractApplyForm.php',
     'Vis\\ApplyForm\\Models\\AbstractApplyFormSetting' => $baseDir . '/src/Models/AbstractApplyFormSetting.php',
     'Vis\\ApplyForm\\Models\\ApplyFormFactory' => $baseDir . '/src/Models/ApplyFormFactory.php',

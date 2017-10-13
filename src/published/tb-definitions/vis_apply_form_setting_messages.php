@@ -14,7 +14,7 @@ return array(
         'tags' => array('vis_apply_form_setting_messages'),
     ),
     'options' => array(
-        'caption' => 'Сообщения ответы',
+        'caption' => 'Заявки - Сообщения ответы',
         'ident' => 'vis_apply_form_setting_messages',
         'form_ident' => 'vis_apply_form_setting_messages-form',
         'form_width' => '920px',

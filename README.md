@@ -26,54 +26,14 @@
    php artisan migrate --path=vendor/vis/apply_form_l5/src/Migrations
 ```
 
-Публикуем config, js, nodes
+Публикуем js, nodes
 ```php
     php artisan vendor:publish --provider="Vis\ApplyForm\ApplyFormServiceProvider" --force
 ```
 
-Добавляем в layouts.default(или на конкретную вьюху, если заявка только на одной странице) перед закрывающим тегом </body>
+Добавляем в layouts.default(или на конкретную вьюху, если заявка только на одной странице) перед закрывающим тегом body
 ```php
 @include('apply_form::apply_form')
-```
-
-## Настройка
-В файле config/apply_form/apply_form.php </br>
-
-Включаем капчу и добавляем публичный и скрытый ключи
-```php  
-    /**
-     * Defines usage of Google Invisible reCaptcha
-     * @link https://www.google.com/recaptcha/admin
-     */
-    'grecaptcha' => [
-        'enabled'    => true,
-        'site_key'   => '',
-        'secret_key' => ''
-    ],
-```
-
-
-В файле public/js/apply_form_rules.js переопределяем методы и указываем в них свои действия(например, вызов попапа с кастомным сообщением) по выполнению ajax запроса
-```js
-ApplyForm.successCallback = function (message) {
-};
-
-ApplyForm.failCallback = function (message) {
-};
-```
-
-В этом же файле можно дописать дополнительные правила проверки полей, например добавить маску для телефонов. </br>
-Для этого в класс ApplyFormRules нужно добавить свой метод, например:
-```js
-        initPhoneMask: function () {
-            $('input[name=phone]').mask('+38 (000) 000-00-00', {clearIfNotMatch: true});
-        },
-``` 
-И зарегистрировать его инициализацую в методе ApplyFormRules.init()
-```js
-        init: function () {
-            ApplyFormRules.initPhoneMask();
-        },
 ```
 
 ## VIS-CMS
@@ -135,6 +95,46 @@ ApplyForm.failCallback = function (message) {
     ),
 ```
 
+## Настройка
+В файле config/apply_form/apply_form.php </br>
+
+Включаем капчу и добавляем публичный и скрытый ключи
+```php  
+    /**
+     * Defines usage of Google Invisible reCaptcha
+     * @link https://www.google.com/recaptcha/admin
+     */
+    'grecaptcha' => [
+        'enabled'    => true,
+        'site_key'   => '',
+        'secret_key' => ''
+    ],
+```
+
+
+В файле public/js/apply_form_rules.js переопределяем методы и указываем в них свои действия(например, вызов попапа с кастомным сообщением) по выполнению ajax запроса
+```js
+ApplyForm.successCallback = function (message) {
+};
+
+ApplyForm.failCallback = function (message) {
+};
+```
+
+В этом же файле можно дописать дополнительные правила проверки полей, например добавить маску для телефонов. </br>
+Для этого в класс ApplyFormRules нужно добавить свой метод, например:
+```js
+        initPhoneMask: function () {
+            $('input[name=phone]').mask('+38 (000) 000-00-00', {clearIfNotMatch: true});
+        },
+``` 
+И зарегистрировать его инициализацую в методе ApplyFormRules.init()
+```js
+        init: function () {
+            ApplyFormRules.initPhoneMask();
+        },
+```
+
 ## Пример использования
 1. Определяем класс, который рассширяет класс Vis\ApplyForm\Models\AbstractApplyForm
 
@@ -153,9 +153,13 @@ class ApplyFormAuthorizedMessage extends AbstractApplyForm
         'answer_type'   => 'required|in:phone,email',
         'phone'         => 'nullable|required_if:answer_type,phone|size:19|regex:/\+38 \((\d{3})\) \d{3}-\d{2}-\d{2}/',
         'email'         => 'nullable|required_if:answer_type,email|email|min:4|max:64',
-        'message'       => 'required|min:10|max:2000'
+        'message'       => 'required|min:10|max:2000',
+        'file'       => 'required|max:3072|mimes:pdf,doc,docx'
     ];
 
+    protected $fileFieldName = 'file';
+    protected $fileStorageFolder = 'storage/apply_forms/files/authorized_message/';
+    
     protected $mailTemplate    = 'shablon-zajavka-avtorizirovannoe-obrashenie';
     protected $mailAddressSlug = 'email-zayavka-avtorizirovannoe-obrashenie';
     protected $messageSlug     = 'soobshchenie-zayavka-avtorizirovannoe-obrashenie';
@@ -171,6 +175,7 @@ class ApplyFormAuthorizedMessage extends AbstractApplyForm
             'phone'       => $this->inputCleaner()->getString('phone'),
             'email'       => $this->inputCleaner()->getCleanString('email'),
             'message'     => $this->inputCleaner()->getCleanString('message'),
+            'file'        => $this->inputCleaner()->getString('file'),
         ];
 
         return $preparedData;
@@ -179,6 +184,8 @@ class ApplyFormAuthorizedMessage extends AbstractApplyForm
     protected function prepareMailData(array $preparedData): array
     {
         $preparedData['answer_type'] = $preparedData['answer_type'] == 'email' ? 'Email' : 'Телефон';
+        $preparedData['file_url']    =  asset($preparedData['file']);
+
 
         return $preparedData;
     }
@@ -223,6 +230,20 @@ class ApplyFormAuthorizedMessage extends AbstractApplyForm
         <textarea name='message' placeholder="{{__t('Повідомлення')}}" ></textarea>
         <p>{{__t("обов`язкове поле")}}</p>
     </div>
+        <div class="form-field">
+            <div class="attach-file">
+                <div class="upload-file">
+                    <input type="file" class="file-input" placeholder="file" id="file" name="file" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf">
+                    <div class="file_upload">
+                        <div class="file_name_placeholder">{{__t('файл')}} (DOC, DOCX, PDF)</div>
+                        <div class="file_name">{{__t('файл')}} (DOC, DOCX, PDF)</div>
+                        <button class="btn btn_delete">{{__t('Видалити')}}</button>
+                        <button class="btn btn_upload">{{__t('Завантажити')}}</button>
+                    </div>
+                    <div class="hint">{{__t('Дозволено приєднувати тільки')}}: DOC, DOCX, PDF (3 MB {{__t('максимум')}})</div>
+                </div>
+            </div>
+        </div>
     <div class="form-field">
         <input type="checkbox" name="personal_data" id="authorized_message-personal_data-checkbox" class="checkbox" value="1">
         <label for="authorized_message-personal_data-checkbox" class="css-label">
