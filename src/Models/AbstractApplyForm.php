@@ -325,6 +325,10 @@ abstract class AbstractApplyForm extends Model
      */
     private function sendMail(array $preparedMailData): bool
 	{
+        if (!$this->getMailAddressSlug()) {
+            return false;
+        }
+
         $mail = new MailT($this->getMailTemplate(), $preparedMailData);
         $mail->to = $this->settingEmail()->get($this->getMailAddressSlug());
 
