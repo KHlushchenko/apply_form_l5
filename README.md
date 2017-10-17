@@ -459,3 +459,16 @@ class ApplyFormAuthorizedMessage extends AbstractApplyForm
 ```php
     public function getJson(string $field): string
 ```
+3. Класс Vis\ApplyForm\Helpers\TableHandler
+Класс хендлер для tb-definitions. </br>
+
+Метод превращения строки с ссылкой на файл в ссылку на файл
+```php
+    protected function handleFile($formField, array &$row)
+```
+
+Метод превращения строки типа foreign в ссылку на foreign объект </br>
+Примечание: в дефинишен поля foreign надо дописать параметр 'foreign_model', а в указанной модели определить метод getAdminUrl
+```php
+    protected function handleForeign($formField, array &$row)
+```

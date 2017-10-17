@@ -43,7 +43,7 @@ class InputCleaner
      */
     public function getInt(string $field): int
     {
-        return (int)$this->get($field);
+        return intval($this->get($field));
     }
 
     /** Returns value as float
@@ -52,7 +52,7 @@ class InputCleaner
      */
     public function getFloat(string $field): float
     {
-        return (float)$this->get($field);
+        return floatval($this->get($field));
     }
 
     /** Returns value as string
