@@ -8,7 +8,10 @@ class TableHandler extends CustomHandler
     protected function handleFile($formField, array &$row)
     {
         if ($formField->getFieldName() == 'file') {
-            return "<a download href='" . asset($row['file']) . "'>файл</a>";
+            if($row['file']){
+                return "<a download href='" . asset($row['file']) . "'>файл</a>";
+            }
+            return "-";
         }
 
         return false;
@@ -20,6 +23,7 @@ class TableHandler extends CustomHandler
             if ($item = $formField->getAttribute('foreign_model')::where("id", $row[$formField->getFieldName()])->first()) {
                 return "<a target='_blank' href='" . $item->getAdminUrl() . "'>$item->title</a>";
             }
+            return "-";
         }
         return false;
     }
