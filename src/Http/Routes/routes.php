@@ -6,6 +6,7 @@ Route::group(
     [
         'prefix'     => LaravelLocalization::setLocale(),
         'namespace'  => 'Vis\ApplyForm\Controllers',
+        'middleware' => ['web'],
     ],
     function () {
         if (Request::ajax()) {
