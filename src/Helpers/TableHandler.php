@@ -21,7 +21,7 @@ class TableHandler extends CustomHandler
     {
         if ($formField->getAttribute('type') == 'foreign') {
             if ($item = $formField->getAttribute('foreign_model')::where("id", $row[$formField->getFieldName()])->first()) {
-                return "<a target='_blank' href='" . $item->getAdminUrl() . "'>$item->title</a>";
+                return "<a target='_blank' href='" . $item->getAdminUrl() . "'>{$item->{$formField->getAttribute('foreign_value_field')}}</a>";
             }
             return "-";
         }
