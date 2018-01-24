@@ -1,31 +1,34 @@
 <?php
+
 namespace Vis\ApplyForm\Models;
 
 use \App;
 
-/** Message settings class for ApplyForm
+/**
+ * Message settings class for ApplyForm
  * Class ApplyFormSettingMessage
  * @package Vis\ApplyForm\Models
  */
 class ApplyFormSettingMessage extends AbstractApplyFormSetting
 {
-    /** Defines settings table
+    /**
+     * Defines settings table
      * @var string
      */
     protected $table = 'vis_apply_form_setting_messages';
 
-    /** Gets value from ApplyFormSettingMessage
-     * @param string $slug
-     * @return array
+    /**
+     * Gets value for retrieved ApplyFormSetting model
+     * @param AbstractApplyFormSetting $record
+     * @return mixed
      */
-    protected function getValue(string $slug)
+    protected function getValue(AbstractApplyFormSetting $record)
     {
         $fieldPostFix = App::getLocale() !== config('translations.config.def_locale') ? "_" . App::getLocale() : '';
-        $message = $this->whereSlug($slug)->first();
 
         return [
-            'title'       => $message->{'message_title'.$fieldPostFix},
-            'description' => $message->{'message_description'.$fieldPostFix},
+            'title'       => $record->getAttribute('message_title'.$fieldPostFix),
+            'description' => $record->getAttribute('message_description'.$fieldPostFix)
         ];
     }
 
